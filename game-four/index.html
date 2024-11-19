@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../assets/gfour.png" type="image/x-icon">
+    <title>Sliding Puzzle Game 🔢</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(4, 80px);
+            grid-gap: 5px;
+        }
+        .tile {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #3498db;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+        }
+        .empty {
+            background-color: #ecf0f1;
+            cursor: default;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+
+    <div>
+        <h1>Sliding Puzzle Game</h1>
+        <div class="container" id="puzzle"></div>
+        <div class="controls">
+            <button onclick="shuffle()">Shuffle</button>
+        </div>
+    </div>
+
+    <script>
+        const puzzleContainer = document.getElementById('puzzle');
+        let tiles = [];
+        const size = 4;
+
+        // Initialize puzzle
+        function initPuzzle() {
+            tiles = [];
+            puzzleContainer.innerHTML = '';
+            for (let i = 1; i <= size * size - 1; i++) {
+                const tile = document.createElement('div');
+                tile.className = 'tile';
+                tile.innerText = i;
+                tile.onclick = () => moveTile(i);
+                tiles.push(tile);
+                puzzleContainer.appendChild(tile);
+            }
+            // Add the empty tile
+            const emptyTile = document.createElement('div');
+            emptyTile.className = 'tile empty';
+            tiles.push(emptyTile);
+            puzzleContainer.appendChild(emptyTile);
+        }
+
+        // Shuffle the puzzle
+        function shuffle() {
+            for (let i = tiles.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+            }
+            renderPuzzle();
+        }
+
+        // Render puzzle on the screen
+        function renderPuzzle() {
+            puzzleContainer.innerHTML = '';
+            tiles.forEach(tile => {
+                puzzleContainer.appendChild(tile);
+            });
+        }
+
+        // Move tile
+        function moveTile(index) {
+            const emptyIndex = tiles.findIndex(tile => tile.classList.contains('empty'));
+            const targetIndex = tiles.findIndex(tile => tile.innerText == index);
+
+            if (isAdjacent(emptyIndex, targetIndex)) {
+                [tiles[emptyIndex], tiles[targetIndex]] = [tiles[targetIndex], tiles[emptyIndex]];
+                renderPuzzle();
+                if (checkWin()) {
+                    setTimeout(() => alert("Congratulations! You solved the puzzle!"), 100);
+                }
+            }
+        }
+
+        // Check if two tiles are adjacent
+        function isAdjacent(index1, index2) {
+            const row1 = Math.floor(index1 / size);
+            const col1 = index1 % size;
+            const row2 = Math.floor(index2 / size);
+            const col2 = index2 % size;
+            return Math.abs(row1 - row2) + Math.abs(col1 - col2) === 1;
+        }
+
+        // Check if the puzzle is solved
+        function checkWin() {
+            for (let i = 0; i < tiles.length - 1; i++) {
+                if (tiles[i].innerText != i + 1) return false;
+            }
+            return true;
+        }
+
+        // Initialize the game
+        initPuzzle();
+        shuffle();
+    </script>
+
+</body>
+</html>

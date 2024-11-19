@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit Basket Game 🍎</title>
+    <link rel="shortcut icon" href="../assets/gthree.png" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #ffd700, #ff4500);
+            overflow: hidden;
+        }
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 80vh;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        #basket {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 60px;
+            background: url('https://cdn-icons-png.flaticon.com/512/2903/2903291.png') no-repeat center / cover;
+        }
+        .fruit {
+            position: absolute;
+            top: -50px;
+            width: 50px;
+            height: 50px;
+            animation: fall 3s linear infinite;
+        }
+        @keyframes fall {
+            0% { top: -50px; }
+            100% { top: 100vh; }
+        }
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 1.5rem;
+            color: #333;
+        }
+        #game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            color: red;
+            display: none;
+        }
+        #restart-btn {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            border: none;
+            background-color: #32cd32;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            display: none;
+        }
+        @media (max-width: 768px) {
+            #game-container {
+                width: 90%;
+                height: 70vh;
+            }
+            #basket {
+                width: 60px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="basket"></div>
+        <div id="score">Score: 0</div>
+        <div id="game-over">Game Over!</div>
+        <button id="restart-btn">Restart</button>
+    </div>
+
+    <script>
+        const basket = document.getElementById('basket');
+        const gameContainer = document.getElementById('game-container');
+        const scoreDisplay = document.getElementById('score');
+        const gameOverDisplay = document.getElementById('game-over');
+        const restartBtn = document.getElementById('restart-btn');
+
+        let score = 0;
+        let isGameOver = false;
+
+        function getRandomFruit() {
+            const fruits = [
+                'https://cdn-icons-png.flaticon.com/512/415/415682.png', // apple
+                'https://cdn-icons-png.flaticon.com/512/135/135620.png', // banana
+                'https://cdn-icons-png.flaticon.com/512/1046/1046869.png', // orange
+                'https://cdn-icons-png.flaticon.com/512/135/135724.png'  // grape
+            ];
+            return fruits[Math.floor(Math.random() * fruits.length)];
+        }
+
+        function createFruit() {
+            const fruit = document.createElement('img');
+            fruit.src = getRandomFruit();
+            fruit.classList.add('fruit');
+            fruit.style.left = Math.random() * (gameContainer.clientWidth - 50) + 'px';
+            gameContainer.appendChild(fruit);
+
+            const fallInterval = setInterval(() => {
+                const fruitRect = fruit.getBoundingClientRect();
+                const basketRect = basket.getBoundingClientRect();
+
+                if (
+                    fruitRect.bottom >= basketRect.top &&
+                    fruitRect.left < basketRect.right &&
+                    fruitRect.right > basketRect.left
+                ) {
+                    score++;
+                    scoreDisplay.textContent = `Score: ${score}`;
+                    fruit.remove();
+                    clearInterval(fallInterval);
+                }
+
+                if (fruitRect.top > window.innerHeight) {
+                    fruit.remove();
+                    clearInterval(fallInterval);
+                    endGame();
+                }
+            }, 20);
+        }
+
+        function endGame() {
+            isGameOver = true;
+            gameOverDisplay.style.display = 'block';
+            restartBtn.style.display = 'block';
+        }
+
+        function restartGame() {
+            isGameOver = false;
+            score = 0;
+            scoreDisplay.textContent = `Score: ${score}`;
+            gameOverDisplay.style.display = 'none';
+            restartBtn.style.display = 'none';
+            startGame();
+        }
+
+        function startGame() {
+            setInterval(() => {
+                if (!isGameOver) createFruit();
+            }, 1000);
+        }
+
+        // Move basket with mouse
+        gameContainer.addEventListener('mousemove', (e) => {
+            basket.style.left = e.clientX - gameContainer.offsetLeft - basket.offsetWidth / 2 + 'px';
+        });
+
+        restartBtn.addEventListener('click', restartGame);
+
+        // Start the game
+        startGame();
+    </script>
+</body>
+</html>

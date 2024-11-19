@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="../assets/gtwo.png" type="image/x-icon">
+    <title>Digital proposal method 🫣</title>
+</head>
+
+<body>
+    <div class="proposal">
+        <h1>Will You Marry Me?</h1>
+        <div class="buttons">
+            <button onclick="handleYesClick()" id="yes">Yes</button>
+            <button id="no">No</button>
+        </div>
+    </div>
+    <div class="decoration">
+        <img src="assets/heart.webp" alt="Heart" style="top: 20%; left: 10%;">
+        <img src="assets/heart.webp" alt="Heart" style="top: 80%; left: 80%;">
+        <img src="assets/heart.webp" alt="Heart" style="top: 90%; left: 40%;">
+        <img src="assets/heart.webp" alt="Heart" style="top: 10%; left: 60%;">
+        <img src="assets/heart.webp" alt="Heart" style="top: 80%; left: 5%;">
+        <img src="assets/heart.webp" alt="Heart" style="top: 40%; left: 90%;">
+    </div>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <p>I can't believe you are ready to marry me! 😃</p>
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById('no').addEventListener('mouseover', function () {
+            this.style.top = Math.random() * (window.innerHeight - this.offsetHeight) + 'px';
+            this.style.left = Math.random() * (window.innerWidth - this.offsetWidth) + 'px';
+        });
+
+        function handleYesClick() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+        }
+        window.addEventListener('resize', function () {
+            document.querySelectorAll('.decoration img').forEach(function (img) {
+                img.style.top = Math.random() * 80 + '%';
+                img.style.left = Math.random() * 80 + '%';
+            });
+        });
+    </script>
+</body>
+
+</html>
